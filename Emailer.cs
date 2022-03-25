@@ -5,14 +5,13 @@ using System.Net.Mime;
 using System.Collections.Generic;
 using System;
 using InfoRetrieval;
-using iText.Layout;
 namespace Emailer{
     class EmailSender{
         public EmailSender(){
 
         }
 
-        void emailRecipients(List<string> recipients, Document report ){
+        void emailRecipients(List<string> recipients){
             SmtpClient mySmtpClient = new SmtpClient("my.smtp.exampleserver.net");
             MailMessage statusMessage =  new MailMessage(
         "jane@contoso.com",

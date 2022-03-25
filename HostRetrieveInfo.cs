@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Net.NetworkInformation;
 using HostReport;
 using System.Net.Http;
-using iText.Layout;
+
 using System.Collections.Generic;
 using System;
 using System.IO;
