@@ -26,8 +26,10 @@ namespace InfoRetrieval {
         }
 
         public async void retrieveAllAdressInfo(List<string> adresses) {
+            /* The default folder (and as a consequence, the output location of the latex pdf) is the location of the program itself.
+             Therefore, we change the working directory to the current user's directory, so that the pdf is created in the desired folder location*/
+            Directory.SetCurrentDirectory(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
             string fpath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)  + "\\" + (DateTime.Now.ToString(@"dd\-MM\-yyyy-h-mmtt") + "-hostreport.tex"));
-            Console.WriteLine(fpath);
             TcpClient scan = new TcpClient();
             PingOptions options = new PingOptions(this.ttl, true);
             this.InitalizeReport(fpath);
@@ -36,6 +38,7 @@ namespace InfoRetrieval {
                         File.AppendAllText(fpath, "\\section{" + "Summary of " + adress + "} \n");
                         File.AppendAllText(fpath, "\\begin{enumerate} \n");
                     for (int i = 0; i < this.ttl; i++) {
+                        try { 
                             PingReply reply = pinger.Send(adress, this.timeout, this.data, options);
                             if (reply.Status == IPStatus.Success || reply.Status == IPStatus.TtlExpired) {
                             string[] pingInfo = { "\\item ", "Reply Adress " + reply.Address.ToString(), "Result: " + reply.Status.ToString(), "RTT(ms): "+ reply.RoundtripTime.ToString(), "TTL: " + reply.Options.Ttl.ToString(), "Don't fragment: " + reply.Options.DontFragment.ToString(), "Reply buffer size: " + reply.Buffer.Length.ToString() };
@@ -45,7 +48,12 @@ namespace InfoRetrieval {
                             break;
                         }
                               
+                        } catch (PingException) {
+                            this.WriteErrornousHost(fpath);
+                            break;
                         }
+                    }
+                    
                     File.AppendAllText(fpath, "\\end{enumerate} \n");
                 }
                 }
@@ -53,7 +61,9 @@ namespace InfoRetrieval {
 
 
            this.FinishReport(fpath);
-            Process.Start("pdflatex", fpath);
+            Console.WriteLine("pdflatex " + fpath);
+            Process latexCompilation = Process.Start("pdflatex ", fpath);
+
             
         }
     }
