@@ -63,7 +63,14 @@ namespace InfoRetrieval {
            this.FinishReport(fpath);
             Console.WriteLine("pdflatex " + fpath);
             Process latexCompilation = Process.Start("pdflatex ", fpath);
-            return fpath;
+            /*We specifically have to force the program to wait for the compilation of the pdf file
+             to be done because otherwise, the program will return the file path of the pdf before
+            it exists, causing error when attaching it to the email*/
+            latexCompilation.WaitForExit();
+            /*The pdf, rather than the tex file path is returned because we want to send the PDF as
+             an attachment, so we have to return the file path of the pdf because it can then be fed as
+            input for the email process*/
+            return fpath.Split(".tex")[0]+".pdf";
 
             
         }
