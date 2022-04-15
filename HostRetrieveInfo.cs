@@ -25,7 +25,7 @@ namespace InfoRetrieval {
             this.data = System.Text.Encoding.ASCII.GetBytes(bfr);
         }
 
-        public async void retrieveAllAdressInfo(List<string> adresses) {
+        public string retrieveAllAdressInfo(List<string> adresses) {
             /* The default folder (and as a consequence, the output location of the latex pdf) is the location of the program itself.
              Therefore, we change the working directory to the current user's directory, so that the pdf is created in the desired folder location*/
             Directory.SetCurrentDirectory(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
@@ -63,6 +63,7 @@ namespace InfoRetrieval {
            this.FinishReport(fpath);
             Console.WriteLine("pdflatex " + fpath);
             Process latexCompilation = Process.Start("pdflatex ", fpath);
+            return fpath;
 
             
         }
